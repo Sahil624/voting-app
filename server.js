@@ -10,7 +10,7 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended:true}));
 
 app.use(session({
-    secret : 'secretkey',
+    secret : 'lta4t*a-/tatE64A6E4*&guwri9*&^',
     resave : true,
     saveUninitialized : true
 }))
@@ -21,15 +21,47 @@ app.engine('html',engines.nunjucks);
 app.set('view engine','html');
 app.set('views',__dirname + '/views');
 
-mongo.connect('mongodb://127.0.0.1:27017',function(err,db){
+mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
+    db.collection('polls').find().toArray(function(err,docs){
+        if(err){
+            console.log(err);
+        }
+        app.get('/viewpls',function(req,res){
+            res.send(docs);
+        })
+    })
+    
+    db.close();
+});
+
+mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
+    db.collection('polls').find().toArray(function(err,docs){
+        if(err){
+            console.log(err);
+        }
+        app.get('/',function(req,res){
+            res.render('index',{here:docs});
+        })
+    })
+    
+    db.close();
+});
+/*
+mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
     if(err){
         console.log(err);
     }
     app.get('/',function(req,res){
-        res.render('index',{here:'polls'});
+        db.collection('polls').find().toArray(function(err,docs){
+            if(err){
+                console.log(err);
+            }
+            console.log(docs);
+            res.render('index',{here:docs});
+        })
     });
 db.close();
-});
+});*/
 
 app.get('/login',function(req,res){
     console.log(session.uid);
@@ -61,13 +93,14 @@ app.post('/auth',function(req,res){
             }
             
             else{
-                    if(user == docs[0].users && pass ==docs[0].passs){
+                    if(docs.length == 0){
+                        res.redirect('/login');
+                    }    
+                
+                    else if(user == docs[0].users && pass ==docs[0].passs){
                         res.redirect('/');
                         session.uid = user;
                     console.log('success');
-                    }
-                    else{
-                        console.log('No user');
                     }
             }
         });
@@ -120,7 +153,27 @@ app.get('/admin',function(req,res){
         else{
             res.redirect('/login');
         }
-    })
+});
+
+app.get('/add',function(req,res){
+    if(session.uid){
+        res.render('poll');
+    }
+});
+
+app.post('/add',function(req,res){
+   var poll = req.body.ques;
+    mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
+            if(err){
+                console.log(err);
+            }
+
+            else{
+                db.collection('polls').insertOne({'ques':poll});
+            }
+        db.close();
+        });
+});
 
 app.listen(1337,function(){
     console.log('Listening to 1337');

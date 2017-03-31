@@ -1,7 +1,9 @@
 <html>
     <body>
-        <h1>{{here}} will come here</h1>
+        <h1>Polls will come here</h1>
         
-        
+        {% for poll in here %}
+        <li>{{ poll.ques }}</li>
+        {% endfor %}
     </body>
 </html>
