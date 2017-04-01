@@ -1,9 +1,15 @@
 <html>
+    <head>
+        <title>Voting App</title>
+    </head>
     <body>
         <h1>Polls will come here</h1>
         
         {% for poll in here %}
         <li>{{ poll.ques }}</li>
+        {% for opt in poll.opts %}
+        <input type="radio" name={{ opt }}>{{ opt }} <br>
+        {% endfor %}
         {% endfor %}
     </body>
 </html>

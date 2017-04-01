@@ -21,47 +21,33 @@ app.engine('html',engines.nunjucks);
 app.set('view engine','html');
 app.set('views',__dirname + '/views');
 
+app.get('/viewpls',function(req,res){
 mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
     db.collection('polls').find().toArray(function(err,docs){
         if(err){
             console.log(err);
         }
-        app.get('/viewpls',function(req,res){
+        
             res.send(docs);
         })
     })
     
     db.close();
 });
-
+app.get('/',function(req,res){
 mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
     db.collection('polls').find().toArray(function(err,docs){
         if(err){
             console.log(err);
         }
-        app.get('/',function(req,res){
+        else{
             res.render('index',{here:docs});
+        }
         })
+    db.close();
     })
     
-    db.close();
 });
-/*
-mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
-    if(err){
-        console.log(err);
-    }
-    app.get('/',function(req,res){
-        db.collection('polls').find().toArray(function(err,docs){
-            if(err){
-                console.log(err);
-            }
-            console.log(docs);
-            res.render('index',{here:docs});
-        })
-    });
-db.close();
-});*/
 
 app.get('/login',function(req,res){
     console.log(session.uid);
@@ -98,7 +84,7 @@ app.post('/auth',function(req,res){
                     }    
                 
                     else if(user == docs[0].users && pass ==docs[0].passs){
-                        res.redirect('/');
+                        res.redirect('/profile');
                         session.uid = user;
                     console.log('success');
                     }
@@ -136,16 +122,6 @@ mongo.connect('mongodb://127.0.0.1:27017/users',function(err,db){
     db.close();
 });
 
-app.get('/admin',function(req,res){
-    if(session.uid){
-        res.send('Admin');
-    }
-    
-    else{
-        res.redirect('/');
-    }
-})
-
  app.get('/profile',function(req,res){
         if(session.uid){
             res.render('admin',{title: session.uid});
@@ -162,14 +138,29 @@ app.get('/add',function(req,res){
 });
 
 app.post('/add',function(req,res){
+    var opt = [];
    var poll = req.body.ques;
+   // for(var i=0;i<4;i++){
+    //    var y ='o'+i;
+    //    console.log(y);
+        var x = req.body.o1;
+        console.log(x);
+        opt.push(x);
+    var x = req.body.o2;
+    opt.push(x);
+    var x = req.body.o3;
+    opt.push(x);
+    var x = req.body.o4;
+    opt.push(x);
+   // }
     mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
             if(err){
                 console.log(err);
             }
 
             else{
-                db.collection('polls').insertOne({'ques':poll});
+                //console.log(poll,opt);
+                db.collection('polls').insertOne({'ques':poll,'opts':opt});
             }
         db.close();
         });
