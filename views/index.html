@@ -4,12 +4,9 @@
     </head>
     <body>
         <h1>Polls will come here</h1>
-        
         {% for poll in here %}
-        <li>{{ poll.ques }}</li>
-        {% for opt in poll.opts %}
-        <input type="radio" name={{ opt }}>{{ opt }} <br>
-        {% endfor %}
+        <li><a href="/poll/{{ poll._id }}">{{ poll.ques }}</a></li>
+        
         {% endfor %}
     </body>
 </html>

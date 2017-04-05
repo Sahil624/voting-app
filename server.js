@@ -41,6 +41,7 @@ mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
             console.log(err);
         }
         else{
+            console.log(docs[0]._id);
             res.render('index',{here:docs});
         }
         })
@@ -161,10 +162,23 @@ app.post('/add',function(req,res){
             else{
                 //console.log(poll,opt);
                 db.collection('polls').insertOne({'ques':poll,'opts':opt});
+                res.redirect('/');
             }
         db.close();
         });
 });
+
+    app.get('/poll/:no',function(req,res){
+        var id = req.params;
+        var id = toString(id);
+        mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
+            db.collection('polls').find().toArray(function(err,docs){
+                console.log(docs);
+                res.render('viewpoll',{here:docs});
+            })
+            db.close();
+        })
+    })
 
 app.listen(1337,function(){
     console.log('Listening to 1337');
