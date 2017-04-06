@@ -1,6 +1,6 @@
 var express = require('express');
 var engines = require('consolidate');
-var session = require('express-session')
+var sessions = require('express-session')
 var bodyparser = require('body-parser');
 var mongo = require('mongodb').MongoClient;
 
@@ -9,13 +9,14 @@ var app = express();
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended:true}));
 
-app.use(session({
-    secret : 'lta4t*a-/tatE64A6E4*&guwri9*&^',
-    resave : true,
-    saveUninitialized : true
+var session;
+
+app.use(sessions({
+	secret : 'fdf87wye1iehiw2ew8973g',
+	resave : false,
+	saveUninitialized:true
 }))
 
-var session;
 
 app.engine('html',engines.nunjucks);
 app.set('view engine','html');
@@ -51,8 +52,8 @@ mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
 });
 
 app.get('/login',function(req,res){
-    console.log(session.uid);
-    if(session.uid){
+    console.log('in Login '+ req.session.uni);
+    if(req.session.uni){
         res.redirect('/');
     }
     
@@ -64,13 +65,12 @@ app.get('/login',function(req,res){
 
 app.get('/logout',function(req,res){
     req.session.destroy(function(err){
-        session.uid = '';
 		res.redirect('/login');
 	})
 })
 
 app.post('/auth',function(req,res){
-    session = req.session;
+    
     mongo.connect('mongodb://127.0.0.1:27017/users',function(err,db){
         var user = req.body.uname;
         var pass = req.body.pwd;
@@ -85,8 +85,9 @@ app.post('/auth',function(req,res){
                     }    
                 
                     else if(user == docs[0].users && pass ==docs[0].passs){
+                        req.session.uni = user;
+                        console.log('Assignment '+req.session.uni);
                         res.redirect('/profile');
-                        session.uid = user;
                     console.log('success');
                     }
             }
@@ -124,8 +125,8 @@ mongo.connect('mongodb://127.0.0.1:27017/users',function(err,db){
 });
 
  app.get('/profile',function(req,res){
-        if(session.uid){
-            res.render('admin',{title: session.uid});
+        if(req.session.uni){
+            res.render('admin',{title: req.session.uni});
         }
         else{
             res.redirect('/login');
@@ -133,7 +134,7 @@ mongo.connect('mongodb://127.0.0.1:27017/users',function(err,db){
 });
 
 app.get('/add',function(req,res){
-    if(session.uid){
+    if(req.session.uni){
         res.render('poll');
     }
 });
@@ -141,9 +142,6 @@ app.get('/add',function(req,res){
 app.post('/add',function(req,res){
     var opt = [];
    var poll = req.body.ques;
-   // for(var i=0;i<4;i++){
-    //    var y ='o'+i;
-    //    console.log(y);
         var x = req.body.o1;
         console.log(x);
         opt.push(x);
@@ -153,14 +151,12 @@ app.post('/add',function(req,res){
     opt.push(x);
     var x = req.body.o4;
     opt.push(x);
-   // }
     mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
             if(err){
                 console.log(err);
             }
 
             else{
-                //console.log(poll,opt);
                 db.collection('polls').insertOne({'ques':poll,'opts':opt});
                 res.redirect('/');
             }
