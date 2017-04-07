@@ -42,7 +42,6 @@ mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
             console.log(err);
         }
         else{
-            console.log(docs[0]._id);
             res.render('index',{here:docs});
         }
         })
@@ -86,9 +85,9 @@ app.post('/auth',function(req,res){
                 
                     else if(user == docs[0].users && pass ==docs[0].passs){
                         req.session.uni = user;
-                        console.log('Assignment '+req.session.uni);
+                        //console.log('Assignment '+req.session.uni);
                         res.redirect('/profile');
-                    console.log('success');
+                    //console.log('success');
                     }
             }
         });
@@ -110,6 +109,7 @@ app.post('/auth',function(req,res){
         db.close(); 
     });
 });  
+
 
 mongo.connect('mongodb://127.0.0.1:27017/users',function(err,db){
     db.collection('users').find().toArray(function(err,docs){
@@ -140,6 +140,7 @@ app.get('/add',function(req,res){
 });
 
 app.post('/add',function(req,res){
+    var len;
     var opt = [];
    var poll = req.body.ques;
         var x = req.body.o1;
@@ -151,31 +152,49 @@ app.post('/add',function(req,res){
     opt.push(x);
     var x = req.body.o4;
     opt.push(x);
-    mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
+    
+     mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
             if(err){
                 console.log(err);
             }
 
             else{
-                db.collection('polls').insertOne({'ques':poll,'opts':opt});
+                    len = Math.random()*1000;
+                    len = Math.floor(len);
+                     db.collection('polls').insertOne({'_id':len,'ques':poll,'opts':opt});
+                    console.log('inserted',{'_id':len,'ques':poll,'opts':opt});
+                    console.log('After insert');
                 res.redirect('/');
+                
             }
-        db.close();
-        });
+         db.close();
+     });
 });
+    
 
     app.get('/poll/:no',function(req,res){
-        var id = req.params;
-        var id = toString(id);
+        var id = req.params.no;
+        id = parseInt(id);
+        //console.log('id',id);
         mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
-            db.collection('polls').find().toArray(function(err,docs){
-                console.log(docs);
+            db.collection('polls').find({'_id':id}).toArray(function(err,docs){
+               // console.log(docs);
                 res.render('viewpoll',{here:docs});
             })
             db.close();
         })
     })
 
+    app.post('/vote',function(req,res){
+        var b = req.body.btn;
+        var q = req.body.ques;
+        console.log(b,q);
+         mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
+            // db.collection('polls').insertOne()
+             db.close();
+         });
+    })
+    
 app.listen(1337,function(){
     console.log('Listening to 1337');
 })

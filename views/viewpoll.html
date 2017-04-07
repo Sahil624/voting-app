@@ -4,12 +4,15 @@
     
     {% for poll in here %}
         
-    <li>{{ poll.ques }}</li>
+    <form action="/vote" method="post">
+    <li name="ques">{{ poll.ques }}</li>
         {% for opt in poll.opts %}
-        <input type="radio" name={{ opt }}>{{ opt }} <br>
+        <input type="radio" name="btn" value="{{ opt }}">{{ opt }} <br>
         {% endfor %}
-            
-    {% endfor %}
+          <input type="submit" value="Vote">
+    </form>   
     
+    {% endfor %}
+        
     </body>
 </html>
