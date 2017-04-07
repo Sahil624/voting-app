@@ -126,7 +126,19 @@ mongo.connect('mongodb://127.0.0.1:27017/users',function(err,db){
 
  app.get('/profile',function(req,res){
         if(req.session.uni){
-            res.render('admin',{title: req.session.uni});
+            
+            mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
+                db.collection('polls').find({owner:req.session.uni}).toArray(function(err,docs){
+                    if(err){
+                        console.log(err);
+                    }
+                    else{
+                        res.render('admin',{title: req.session.uni,here:docs});
+                        //res.render('index',{here:docs});
+                    }
+                    })
+                db.close();
+            })
         }
         else{
             res.redirect('/login');
@@ -153,6 +165,8 @@ app.post('/add',function(req,res){
     var x = req.body.o4;
     opt.push(x);
     
+    var vt = [0,0,0,0];
+    
      mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
             if(err){
                 console.log(err);
@@ -161,8 +175,9 @@ app.post('/add',function(req,res){
             else{
                     len = Math.random()*1000;
                     len = Math.floor(len);
-                     db.collection('polls').insertOne({'_id':len,'ques':poll,'opts':opt});
-                    console.log('inserted',{'_id':len,'ques':poll,'opts':opt});
+                    var ans = [];
+                     db.collection('polls').insertOne({'_id':len,'owner':req.session.uni,'ques':poll,'opts':opt,'votes':vt,'answers':ans});
+                    console.log('inserted',{'_id':len,'ques':poll,'opts':opt,'votes':vt});
                     console.log('After insert');
                 res.redirect('/');
                 
@@ -178,23 +193,57 @@ app.post('/add',function(req,res){
         //console.log('id',id);
         mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
             db.collection('polls').find({'_id':id}).toArray(function(err,docs){
-               // console.log(docs);
-                res.render('viewpoll',{here:docs});
+                
+                var arr = docs[0].answers;
+                var result = {};
+                
+                 for(var i = 0; i < arr.length; ++i) {
+                    if(!result[arr[i]])
+                        result[arr[i]] = 0;
+                    ++result[arr[i]];
+                }
+                
+                var rese = Object.keys(result).map(function(e) {
+                  return [String(e), result[e]];
+                });
+
+                
+                console.log(rese);
+                res.render('viewpoll',{here:docs,no:id,res:rese});
             })
             db.close();
-        })
-    })
+        });
+    });
 
-    app.post('/vote',function(req,res){
+    app.post('/vote/:no',function(req,res){
         var b = req.body.btn;
-        var q = req.body.ques;
-        console.log(b,q);
+        var id = req.params.no;
+        var data;
+        id = parseInt(id);
+        console.log(b,id);
          mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
-            // db.collection('polls').insertOne()
+             db.collection('polls').find({'_id':id}).toArray(function(err,docs){
+                 var pos = docs[0].opts.indexOf(b);
+                 data = docs;
+             })
+             //pos--;
+             //data.opts[pos]++;
+             db.collection('polls').updateOne({'_id':id},{$push:{'answers':b}},function(err,result){
+                 if(err){
+                     console.log(err);
+                 }
+                 
+                 else{
+                    // console.log(result);
+                     var url = '/poll/'+id;
+                     res.redirect(url);
+                 }
+             });
              db.close();
          });
-    })
-    
+    });
+
+
 app.listen(1337,function(){
     console.log('Listening to 1337');
 })

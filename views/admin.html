@@ -6,5 +6,10 @@
     <body>
         <h1>Welcome {{ title }}</h1>
         <a href="/add" >Add A Poll</a>
-    </body>
+        
+        <h3>Your Polls Are:-</h3>
+        {% for poll in here %}
+        <li><a href="/poll/{{ poll._id }}">{{ poll.ques }}</a></li>
+        
+        {% endfor %}
 </html>

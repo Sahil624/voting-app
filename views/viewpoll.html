@@ -4,7 +4,7 @@
     
     {% for poll in here %}
         
-    <form action="/vote" method="post">
+    <form action="/vote/{{ no }}" method="post">
     <li name="ques">{{ poll.ques }}</li>
         {% for opt in poll.opts %}
         <input type="radio" name="btn" value="{{ opt }}">{{ opt }} <br>
@@ -13,6 +13,11 @@
     </form>   
     
     {% endfor %}
-        
+    
+    <h2>Poll Result Till Now are:-</h2>
+    {% for i in res %}
+        <h3>{{i[0]}} {{i[1]}}</h3><br>
+    {% endfor %}
+    
     </body>
 </html>
