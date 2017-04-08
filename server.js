@@ -17,6 +17,7 @@ app.use(sessions({
 	saveUninitialized:true
 }))
 
+var logged = 'Login/SignUp';
 
 app.engine('html',engines.nunjucks);
 app.set('view engine','html');
@@ -41,8 +42,8 @@ mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
         if(err){
             console.log(err);
         }
-        else{
-            res.render('index',{here:docs});
+        else{                   
+            res.render('index',{here:docs,status:logged});
         }
         })
     db.close();
@@ -53,7 +54,7 @@ mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
 app.get('/login',function(req,res){
     console.log('in Login '+ req.session.uni);
     if(req.session.uni){
-        res.redirect('/');
+        res.redirect('/profile');
     }
     
     else{
@@ -64,6 +65,7 @@ app.get('/login',function(req,res){
 
 app.get('/logout',function(req,res){
     req.session.destroy(function(err){
+        logged = 'Login/SignUp';
 		res.redirect('/login');
 	})
 })
@@ -85,6 +87,7 @@ app.post('/auth',function(req,res){
                 
                     else if(user == docs[0].users && pass ==docs[0].passs){
                         req.session.uni = user;
+                        logged = req.session.uni;
                         //console.log('Assignment '+req.session.uni);
                         res.redirect('/profile');
                     //console.log('success');
@@ -208,6 +211,10 @@ app.post('/add',function(req,res){
                 });
 
                 
+                for(var i=0;i<rese.length;i++){
+                    rese[i][0] = String(rese[i][0]);
+                }
+                
                 console.log(rese);
                 res.render('viewpoll',{here:docs,no:id,res:rese});
             })
@@ -242,6 +249,20 @@ app.post('/add',function(req,res){
              db.close();
          });
     });
+
+    app.get('/delete/:no',function(req,res){
+        if(req.session.uni){
+            var a = req.params.no;
+                 mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
+                     db.collection('polls').removeOne({_id:a});
+                     res.redirect('/profile');
+                 });
+        }
+        
+        else{
+            res.redirect('/login');
+        }
+    })
 
 
 app.listen(1337,function(){

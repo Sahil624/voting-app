@@ -1,9 +1,54 @@
 <html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    </head>
     <body>
-        <form action="/auth" method="POST">
-            <input type="text" name="uname">
-            <input type="password" name="pwd">
-            <input type="submit" value="submit">
-        </form>
+        
+        <nav class="navbar navbar-default navbar-inverse">
+          <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#links" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="#">Brand</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="links">
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home <span class="sr-only">(current)</span></a></li>
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                   <li><a href="/login">{{status}}</a></li>
+              </ul>
+            </div><!-- /.navbar-collapse -->
+          </div><!-- /.container-fluid -->
+        </nav>
+        
+        <div class="container">
+            <h1 class="text-center">Login To Your Account</h1>
+            <div class="text-center" style="margin-top:60px;">
+                <form action="/auth" method="POST">
+                    <div class="form-group text-center">
+                        <label for="uname">Enter your Username</label>
+                        <input type="text" name="uname" id="uname">
+                        
+                    </div>
+                    <div class="form-group">
+                        <label for="pwd">Enter Password</label>
+                        <input type="password" name="pwd" id="pwd">
+                    </div>
+                    <div class="form-group">
+                        <input class="btn btn-primary" type="submit" value="submit">
+                    </div>
+                </form>
+            </div>
+            
+            <h3 class="text-center">New Here?<a href="/register">Register Yourself</a></h3>
+        </div>
     </body>
 </html>
