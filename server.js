@@ -1,6 +1,6 @@
 var express = require('express');
 var engines = require('consolidate');
-var sessions = require('express-session')
+var sessions = require('express-session');
 var bodyparser = require('body-parser');
 var mongo = require('mongodb').MongoClient;
 
@@ -8,6 +8,12 @@ var app = express();
 
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended:true}));
+
+// Javascript files
+app.use('/js', express.static(__dirname+'/assets/js'));
+
+// CSS files
+app.use('/css', express.static(__dirname+'/assets/css'));
 
 var session;
 
@@ -52,7 +58,7 @@ mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
 });
 
 app.get('/login',function(req,res){
-    console.log('in Login '+ req.session.uni);
+   // console.log('in Login '+ req.session.uni);
     if(req.session.uni){
         res.redirect('/profile');
     }
@@ -159,7 +165,7 @@ app.post('/add',function(req,res){
     var opt = [];
    var poll = req.body.ques;
         var x = req.body.o1;
-        console.log(x);
+        //console.log(x);
         opt.push(x);
     var x = req.body.o2;
     opt.push(x);
@@ -180,8 +186,8 @@ app.post('/add',function(req,res){
                     len = Math.floor(len);
                     var ans = [];
                      db.collection('polls').insertOne({'_id':len,'owner':req.session.uni,'ques':poll,'opts':opt,'votes':vt,'answers':ans});
-                    console.log('inserted',{'_id':len,'ques':poll,'opts':opt,'votes':vt});
-                    console.log('After insert');
+                   // console.log('inserted',{'_id':len,'ques':poll,'opts':opt,'votes':vt});
+                    //console.log('After insert');
                 res.redirect('/');
                 
             }
@@ -215,7 +221,7 @@ app.post('/add',function(req,res){
                     rese[i][0] = String(rese[i][0]);
                 }
                 
-                console.log(rese);
+               // console.log(rese);
                 res.render('viewpoll',{here:docs,no:id,res:rese});
             })
             db.close();
@@ -227,7 +233,7 @@ app.post('/add',function(req,res){
         var id = req.params.no;
         var data;
         id = parseInt(id);
-        console.log(b,id);
+        //console.log(b,id);
          mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
              db.collection('polls').find({'_id':id}).toArray(function(err,docs){
                  var pos = docs[0].opts.indexOf(b);

@@ -1,19 +1,68 @@
 <html>
     <head>
         <title>Add A Poll</title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     </head>
     
     <body>
+        
+        <nav class="navbar navbar-default navbar-inverse">
+          <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#links" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="/">Brand</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="links">
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="/">Home <span class="sr-only">(current)</span></a></li>
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                   <li><a href="/login">{{status}}</a></li>
+              </ul>
+            </div><!-- /.navbar-collapse -->
+          </div><!-- /.container-fluid -->
+        </nav>
+        
+        <div class="container">
         <h1>Add your Poll</h1>
         
-        <form action="/add" method="post">
-            <input type="text" name="ques" placeholder="Enter Your Question">
-            <input type="text" name="o1" placeholder="Enter An Option">
-            <input type="text" name="o2" placeholder="Enter An Option">
-            <input type="text" name="o3" placeholder="Enter An Option">
-            <input type="text" name="o4" placeholder="Enter An Option">
-            <input type="submit" value="Add">
+        <form action="/add" method="post" class="text-center">
+            <div class="form-group">
+                <label for="ques">Enter your Question</label>
+                <input type="text" name="ques" placeholder="Enter Your Question" id="ques">
+            </div>
+            <div class="form-group">
+                <label for="o1">Enter Option 1</label>
+                <input type="text" name="o1" placeholder="Enter An Option" id="o1">
+            </div>
+            <div class="form-group">
+                <label for="o2">Enter Option 2</label>
+                <input type="text" name="o2" placeholder="Enter An Option" id="o2">
+            </div>
+            <div class="form-group">
+                <label for="o3">Enter Option 3</label>
+                <input type="text" name="o3" placeholder="Enter An Option" id="o3">
+            </div>
+            <div class="form-group">
+                <label for="o4">Enter Option 4</label>
+                <input type="text" name="o4" placeholder="Enter An Option" id="o4">
+            </div>
+            <div class="form-group text-center">
+                <input class="btn btn-primary" type="submit" value="Add">
+            </div>
         </form>
-        
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     </body>
 </html>
