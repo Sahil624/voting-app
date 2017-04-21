@@ -15,6 +15,7 @@ app.use('/js', express.static(__dirname+'/assets/js'));
 // CSS files
 app.use('/css', express.static(__dirname+'/assets/css'));
 
+var urlpls = 'mongodb://Sahil624:Sahil1997@ds147480.mlab.com:47480/votingfccapp'
 var session;
 
 app.use(sessions({
@@ -30,20 +31,21 @@ app.set('view engine','html');
 app.set('views',__dirname + '/views');
 
 app.get('/viewpls',function(req,res){
-mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
-    db.collection('polls').find().toArray(function(err,docs){
-        if(err){
-            console.log(err);
-        }
-        
-            res.send(docs);
-        })
+    mongo.connect(urlpls,function(err,db){
+        db.collection('polls').find().toArray(function(err,docs){
+            if(err){
+                console.log(err);
+            }
+
+                res.send(docs);
+            })
     })
     
     db.close();
 });
+
 app.get('/',function(req,res){
-mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
+mongo.connect(urlpls,function(err,db){
     db.collection('polls').find().toArray(function(err,docs){
         if(err){
             console.log(err);
@@ -78,9 +80,12 @@ app.get('/logout',function(req,res){
 
 app.post('/auth',function(req,res){
     
-    mongo.connect('mongodb://127.0.0.1:27017/users',function(err,db){
+    mongo.connect(urlpls,function(err,db){
         var user = req.body.uname;
         var pass = req.body.pwd;
+        if(err){
+            console.log(err);
+        }
         db.collection('users').find({'users':user}).toArray(function(err,docs){
             if(err){
                 console.log(err);
@@ -108,7 +113,7 @@ app.post('/auth',function(req,res){
     });
     
     app.post('/register',function(req,res){
-        mongo.connect('mongodb://127.0.0.1:27017/users',function(err,db){
+        mongo.connect(urlpls,function(err,db){
    
         var user = req.body.uname;
         var pass = req.body.pwd;
@@ -119,24 +124,26 @@ app.post('/auth',function(req,res){
     });
 });  
 
-
-mongo.connect('mongodb://127.0.0.1:27017/users',function(err,db){
+app.get('/view',function(req,res){
+mongo.connect(urlpls,function(err,db){
+    if(err){
+        console.log(err);
+    }
     db.collection('users').find().toArray(function(err,docs){
         if(err){
             console.log(err);
+            db.close();
         }
-        app.get('/view',function(req,res){
             res.send(docs);
+        db.close();
         })
     })
-    
-    db.close();
 });
 
  app.get('/profile',function(req,res){
         if(req.session.uni){
             
-            mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
+            mongo.connect(urlpls,function(err,db){
                 db.collection('polls').find({owner:req.session.uni}).toArray(function(err,docs){
                     if(err){
                         console.log(err);
@@ -175,8 +182,8 @@ app.post('/add',function(req,res){
     opt.push(x);
     
     var vt = [0,0,0,0];
-    
-     mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
+    //mongodb://127.0.0.1:27017
+     mongo.connect(urlpls,function(err,db){
             if(err){
                 console.log(err);
             }
@@ -200,7 +207,7 @@ app.post('/add',function(req,res){
         var id = req.params.no;
         id = parseInt(id);
         //console.log('id',id);
-        mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
+        mongo.connect(urlpls,function(err,db){
             db.collection('polls').find({'_id':id}).toArray(function(err,docs){
                 
                 var arr = docs[0].answers;
@@ -234,7 +241,7 @@ app.post('/add',function(req,res){
         var data;
         id = parseInt(id);
         //console.log(b,id);
-         mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
+         mongo.connect(urlpls,function(err,db){
              db.collection('polls').find({'_id':id}).toArray(function(err,docs){
                  var pos = docs[0].opts.indexOf(b);
                  data = docs;
@@ -259,7 +266,7 @@ app.post('/add',function(req,res){
     app.get('/delete/:no',function(req,res){
         if(req.session.uni){
             var a = req.params.no;
-                 mongo.connect('mongodb://127.0.0.1:27017/polls',function(err,db){
+                 mongo.connect(urlpls,function(err,db){
                      db.collection('polls').removeOne({_id:a});
                      res.redirect('/profile');
                  });
@@ -271,6 +278,6 @@ app.post('/add',function(req,res){
     })
 
 
-app.listen(1337,function(){
+app.listen(process.env.PORT || 1337,function(){
     console.log('Listening to 1337');
 })
