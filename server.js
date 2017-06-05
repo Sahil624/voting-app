@@ -15,7 +15,7 @@ app.use('/js', express.static(__dirname+'/assets/js'));
 // CSS files
 app.use('/css', express.static(__dirname+'/assets/css'));
 
-var urlpls = 'mongodb://Sahil624:Sahil1997@ds147480.mlab.com:47480/votingfccapp'
+var urlpls = "Link To Your Database Here"
 var session;
 
 app.use(sessions({
