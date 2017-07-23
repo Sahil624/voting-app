@@ -207,10 +207,10 @@ app.post('/add',function(req,res){
 
     app.get('/poll/:no',function(req,res){
         var id = req.params.no;
-        id = parseInt(id);
+       // id = parseInt(id);
         //console.log('id',id);
         mongo.connect(urlpls,function(err,db){
-            db.collection('polls').find({'_id':id}).toArray(function(err,docs){
+            db.collection('polls').find({'_id':ObjectId(id)}).toArray(function(err,docs){
                 
                 var arr = docs[0].answers;
                 var result = {};
@@ -241,16 +241,16 @@ app.post('/add',function(req,res){
         var b = req.body.btn;
         var id = req.params.no;
         var data;
-        id = parseInt(id);
+       // id = parseInt(id);
         //console.log(b,id);
          mongo.connect(urlpls,function(err,db){
-             db.collection('polls').find({'_id':id}).toArray(function(err,docs){
+             db.collection('polls').find({'_id':ObjectId(id)}).toArray(function(err,docs){
                  var pos = docs[0].opts.indexOf(b);
                  data = docs;
              })
              //pos--;
              //data.opts[pos]++;
-             db.collection('polls').updateOne({'_id':id},{$push:{'answers':b}},function(err,result){
+             db.collection('polls').updateOne({'_id':ObjectId(id)},{$push:{'answers':b}},function(err,result){
                  if(err){
                      console.log(err);
                  }
