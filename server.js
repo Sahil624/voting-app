@@ -3,7 +3,9 @@ var engines = require('consolidate');
 var sessions = require('express-session');
 var bodyparser = require('body-parser');
 var mongo = require('mongodb').MongoClient;
+var ObjectId = require('mongodb').ObjectID;                                  //HERE
 
+var docs=[];
 var app = express();
 
 app.use(bodyparser.json());
@@ -189,8 +191,8 @@ app.post('/add',function(req,res){
             }
 
             else{
-                    len = Math.random()*1000;
-                    len = Math.floor(len);
+                 //   len = Math.random()*1000;                                 //HERE
+                 //   len = Math.floor(len);                                    //HERE
                     var ans = [];
                      db.collection('polls').insertOne({'_id':len,'owner':req.session.uni,'ques':poll,'opts':opt,'votes':vt,'answers':ans});
                    // console.log('inserted',{'_id':len,'ques':poll,'opts':opt,'votes':vt});
@@ -267,7 +269,7 @@ app.post('/add',function(req,res){
         if(req.session.uni){
             var a = req.params.no;
                  mongo.connect(urlpls,function(err,db){
-                     db.collection('polls').removeOne({_id:a});
+                     db.collection('polls').removeOne({_id:ObjectId(a)});             //HERE
                      res.redirect('/profile');
                  });
         }
