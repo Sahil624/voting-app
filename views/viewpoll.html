@@ -45,7 +45,7 @@
                     </div>
                     {% endfor %}
                     <div class="form-group">
-                      <input class="btn btn-primary" type="submit" value="Vote">
+                      <input class="btn btn-primary" type="submit" value="Vote" id="vote" style="display:none;">
                     </div>
                 </form>   
 
@@ -62,6 +62,13 @@
                 </div>
             </div>
     </div>
+    <script type="text/javascript">
+            var r=document.querySelector("#vote");
+            var q=document.getElementsByName("btn");
+            for ( var i = 0; i< q.length; i++ )
+                        q[ i ].onclick = yolo;
+            function yolo() {r.style.display='block';}
+     </script>
     
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="/js/graph.js"></script>
